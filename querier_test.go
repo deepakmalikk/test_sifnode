@@ -16,13 +16,10 @@ func TestQueryRecordsByDistributionName(t *testing.T) {
     assert.Equal(t, status, result.Status)
 }
 
-func TestQueryRecordsByRecipientAddr_ValidBasic(t *testing.T) {
-	address := sdk.AccAddress("address___")
-	t.Log(address.String())
-
-	result := types.NewQueryRecordsByRecipientAddr(address.String())
-	t.Log(result)
-	assert.Equal(t, address.String(), result.Address)
+func TestQueryRecordsByRecipientAddr(t *testing.T) {
+	address := types.QueryRecordsByRecipient
+	result := types.NewQueryRecordsByRecipientAddr(address)
+	assert.Equal(t, address, result.Address)
 }
 
 func TestQueryUserClaims_ValidBasic(t *testing.T) {
