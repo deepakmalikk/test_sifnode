@@ -4,19 +4,16 @@ import (
 	"testing"
 
 	"github.com/Sifchain/sifnode/x/dispensation/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/stretchr/testify/assert"
 )
 
 
-func TestQueryRecordsByDistributionName_ValidBasic(t *testing.T) {
-	distributionName := types.AttributeKeyDistributionName
+func TestQueryRecordsByDistributionName(t *testing.T) {
+	distributionName := types.QueryRecordsByDistrName
 	status := types.DistributionStatus_DISTRIBUTION_STATUS_PENDING
-	t.Log(distributionName, status)
 	result := types.NewQueryRecordsByDistributionName(distributionName, status)
-	t.Log(result)
 	assert.Equal(t, distributionName, result.DistributionName)
-
+    assert.Equal(t, status, result.Status)
 }
 
 func TestQueryRecordsByRecipientAddr_ValidBasic(t *testing.T) {
