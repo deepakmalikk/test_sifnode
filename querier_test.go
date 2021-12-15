@@ -8,12 +8,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-const (
-	QueryAllDistributions   = "distributions"
-	QueryRecordsByDistrName = "records_by_name"
-	QueryRecordsByRecipient = "records_by_recipient"
-	QueryClaimsByType       = "claims_by_type"
-)
 
 func TestQueryRecordsByDistributionName_ValidBasic(t *testing.T) {
 	distributionName := types.AttributeKeyDistributionName
