@@ -22,10 +22,9 @@ func TestQueryRecordsByRecipientAddr(t *testing.T) {
 	assert.Equal(t, address, result.Address)
 }
 
-func TestQueryUserClaims_ValidBasic(t *testing.T) {
-	distributiontype := types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING
-	t.Log(distributiontype)
-	result := types.NewQueryUserClaims(distributiontype)
-	t.Log(result)
-	assert.Equal(t, distributiontype, result.UserClaimType)
+func TestQueryUserClaims(t *testing.T) {
+	
+	userClaimtype := types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED
+	result := types.NewQueryUserClaims(userClaimtype)
+	assert.Equal(t, userClaimtype, result.UserClaimType)
 }
