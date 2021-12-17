@@ -19,7 +19,9 @@ func TestMsgCreateDistribution(t *testing.T) {
 	output := test.CreatOutputList(2000, "1")
 	authorizedRunner := sdk.AccAddress("addr2_______________")
 	result := types.NewMsgCreateDistribution(distributor, distributionType, output, authorizedRunner.String())
-
+    err := result.ValidateBasic()
+	assert.Error(t, err)
+	
 	key := result.Route()
 	key1 := types.RouterKey
 	typ := result.Type()
@@ -150,6 +152,9 @@ func TestMsgCreateUserClaim(t *testing.T) {
 	userClaimAddress := sdk.AccAddress("addr2_______________")
 	claimType := types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED
 	result := types.NewMsgCreateUserClaim(userClaimAddress, claimType)
+	err := result.ValidateBasic()
+	assert.Error(t, err)
+
 	key := result.Route()
 	key1 := types.RouterKey
 	typ := result.Type()
@@ -169,6 +174,9 @@ func TestMsgRunDistribution(t *testing.T) {
 	distributionName := types.AttributeKeyDistributionName
 	distributionType := types.DistributionType_DISTRIBUTION_TYPE_AIRDROP
 	result := types.NewMsgRunDistribution(runner, distributionName, distributionType)
+    err := result.ValidateBasic()
+	assert.Error(t, err)
+
 	key := result.Route()
 	key1 := types.RouterKey
 	typ := result.Type()
