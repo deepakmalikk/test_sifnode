@@ -315,34 +315,72 @@ func TestGetDistributionTypeFromShortString_default(t *testing.T) {
 	assert.False(t, output)
 }
 
-func TestIsValidDistributionType_LIQUIDITY_MINING(t *testing.T) {
-	distributionType := "DISTRIBUTION_TYPE_LIQUIDITY_MINING"
-	result, output := types.IsValidDistributionType(distributionType)
-	DistributionType := int32(result)
-	assert.NotEmpty(t, DistributionType)
+func TestIsValidDistributionType_airdrop(t *testing.T) {
+	distributiontype := "DISTRIBUTION_TYPE_AIRDROP"
+
+	result, output := types.IsValidDistributionType(distributiontype)
+	returndistribution := types.DistributionType_DISTRIBUTION_TYPE_AIRDROP
+	assert.NotEmpty(t, distributiontype)
+	assert.Equal(t, result, returndistribution)
 	assert.True(t, output)
 }
 
-func TestIsValidDistributionType_VALIDATOR_SUBSIDY(t *testing.T) {
-	distributionType := "DISTRIBUTION_TYPE_VALIDATOR_SUBSIDY"
-	result, output := types.IsValidDistributionType(distributionType)
-	DistributionType := int32(result)
-	assert.NotEmpty(t, DistributionType)
+func TestIsValidDistributionType_mining(t *testing.T) {
+	distributiontype := "DISTRIBUTION_TYPE_LIQUIDITY_MINING"
+
+	result, output := types.IsValidDistributionType(distributiontype)
+	returndistribution := types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING
+	assert.NotEmpty(t, distributiontype)
+	assert.Equal(t, result, returndistribution)
 	assert.True(t, output)
 }
 
-func TestIsValidDistributionType_Default(t *testing.T) {
-	distributionType := ""
-	result, output := types.IsValidDistributionType(distributionType)
-	DistributionType := int32(result)
-	assert.Empty(t, DistributionType)
+func TestIsValidDistributionType_ValidatorSubsidy(t *testing.T) {
+	distributiontype := "DISTRIBUTION_TYPE_VALIDATOR_SUBSIDY"
+
+	result, output := types.IsValidDistributionType(distributiontype)
+	returndistribution := types.DistributionType_DISTRIBUTION_TYPE_VALIDATOR_SUBSIDY
+	assert.NotEmpty(t, distributiontype)
+	assert.Equal(t, result, returndistribution)
+	assert.True(t, output)
+}
+
+func TestIsValidDistributionType_default(t *testing.T) {
+	distributiontype := ""
+
+	result, output := types.IsValidDistributionType(distributiontype)
+	returndistribution := types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED
+	assert.Empty(t, distributiontype)
+	assert.Equal(t, result, returndistribution)
 	assert.False(t, output)
 }
 
-func TestIsValidClaimType(t *testing.T) {
-	ClaimType := "DISTRIBUTION_TYPE_LIQUIDITY_MINING"
-	result, output := types.IsValidClaimType(ClaimType)
-	DistributionType := int32(result)
-	assert.NotEmpty(t, DistributionType)
+func Test_IsValidClaimType_liquidity_mining(t *testing.T) {
+	claimtype := "DISTRIBUTION_TYPE_LIQUIDITY_MINING"
+
+	result, output := types.IsValidClaimType(claimtype)
+	returnclaimtype := types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING
+	assert.NotEmpty(t, claimtype)
+	assert.Equal(t, result, returnclaimtype)
 	assert.True(t, output)
+}
+
+func Test_IsValidClaimType_ValidatorSubsidy(t *testing.T) {
+	claimtype := "DISTRIBUTION_TYPE_VALIDATOR_SUBSIDY"
+
+	result, output := types.IsValidClaimType(claimtype)
+	returnclaimtype := types.DistributionType_DISTRIBUTION_TYPE_VALIDATOR_SUBSIDY
+	assert.NotEmpty(t, claimtype)
+	assert.Equal(t, result, returnclaimtype)
+	assert.True(t, output)
+}
+
+func Test_IsValidClaimType_default(t *testing.T) {
+	claimtype := ""
+
+	result, output := types.IsValidClaimType(claimtype)
+	returnclaimtype := types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED
+	assert.Empty(t, claimtype)
+	assert.Equal(t, result, returnclaimtype)
+	assert.False(t, output)
 }
