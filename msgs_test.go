@@ -71,19 +71,16 @@ func TestMsgCreateDistribution_GetSigners(t *testing.T) {
 
 // func TestMsgCreateDistribution_GetSigners_panic(t *testing.T) {
 // 	sifapp.SetConfig(false)
-// 	distributor := sdk.AccAddress("addr1_______________")
+// 	distributor := "1234"
 // 	authorizedRunner := sdk.AccAddress("addr2_______________")
 // 	msg := types.MsgCreateDistribution{
-// 		Distributor:      distributor.String(),
+// 		Distributor:      distributor,
 // 		DistributionType: types.DistributionType_DISTRIBUTION_TYPE_AIRDROP,
 // 		Output:           test.CreatOutputList(2000, "1"),
 // 		AuthorizedRunner: authorizedRunner.String(),
 // 	}
 // 	result := msg.GetSigners()
-// 	addr, err := sdk.AccAddressFromBech32(types.AttributeKeyClaimTime)
 // 	t.Log(result)
-// 	assert.Error(t, err, addr)
-
 // }
 
 func TestMsgCreateDistribution_GetSignBytes(t *testing.T) {
