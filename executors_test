@@ -50,24 +50,17 @@ func TestKeeper_AccumulateDrops(t *testing.T) {
 	}
 }
 
-// func TestKeeper_DistributeDrops_Fail(t *testing.T) {
-// 	app, ctx := test.CreateTestApp(false)
-// 	keeper := app.DispensationKeeper
-// 	distributionName := ""
-
-// 	runner := ""
-
-// 	_, err := keeper.DistributeDrops(ctx, 1, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING)
-// 	t.Log(err)
-// 	pendingRecords := keeper.GetLimitedRecordsForRunner(ctx, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
-// 	for _, record := range pendingRecords.DistributionRecords {
-// 		recipientAddress, err := sdk.AccAddressFromBech32(record.RecipientAddress)
-// 		t.Log(err)
-// 		t.Log(recipientAddress)
-
-// 	}
-
-// }
+func TestKeeper_DistributeDrops_Fail(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	distributionName := "ar1"
+	runner := ""
+    _, err := keeper.DistributeDrops(ctx, 1, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING)
+	t.Log(err)
+		pendingRecords := k.GetLimitedRecordsForRunner(ctx, distributionName, authorizedRunner, distributionType, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
+	for _, record := range pendingRecords.DistributionRecords {
+		recipientAddress, err := sdk.AccAddressFromBech32(record.RecipientAddress)
+}
 
 func TestKeeper_CreateAndDistributeDrops(t *testing.T) {
 	app, ctx := test.CreateTestApp(false)
@@ -118,6 +111,34 @@ func TestKeeper_VerifyDistribution(t *testing.T) {
 	err := keeper.VerifyAndSetDistribution(ctx, "AR1", types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, authorizedRunner.String())
 	assert.NoError(t, err)
 	err = keeper.VerifyAndSetDistribution(ctx, "AR1", types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, authorizedRunner.String())
+	assert.Error(t, err)
+}
+
+func TestKeeper_AccumulateDrops_InvalidAddressDistribute(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	addr := ""
+	outputAmount := "10000000000000000000"
+	outputList := test.CreatOutputList(3, outputAmount)
+	totalCoins, err := utils.TotalOutput(outputList)
+	assert.NoError(t, err)
+
+	err = keeper.AccumulateDrops(ctx, addr, totalCoins)
+	assert.Error(t, err)
+}
+
+func TestKeeper_AccumulateDrops_Invalid(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	dispensationCreator := sdk.AccAddress("addr1_______________")
+	outputAmount := "10000000000000000000"
+	outputList := test.CreatOutputList(3, outputAmount)
+	totalCoins, err := utils.TotalOutput(outputList)
+	assert.NoError(t, err)
+	err = keeper.AccumulateDrops(ctx, dispensationCreator.String(), totalCoins)
+
+	amount := totalCoins
+	err = keeper.GetBankKeeper().SendCoinsFromAccountToModule(ctx, sdk.AccAddress(dispensationCreator.String()), types.ModuleName, amount)
 	assert.Error(t, err)
 }
 
