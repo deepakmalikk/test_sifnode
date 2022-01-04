@@ -50,17 +50,22 @@ func TestKeeper_AccumulateDrops(t *testing.T) {
 	}
 }
 
-func TestKeeper_DistributeDrops_Fail(t *testing.T) {
-	app, ctx := test.CreateTestApp(false)
-	keeper := app.DispensationKeeper
-	distributionName := "ar1"
-	runner := ""
-    _, err := keeper.DistributeDrops(ctx, 1, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING)
-	t.Log(err)
-		pendingRecords := k.GetLimitedRecordsForRunner(ctx, distributionName, authorizedRunner, distributionType, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
-	for _, record := range pendingRecords.DistributionRecords {
-		recipientAddress, err := sdk.AccAddressFromBech32(record.RecipientAddress)
-}
+// func TestKeeper_DistributeDrops_Fail(t *testing.T) {
+// 	app, ctx := test.CreateTestApp(false)
+// 	keeper := app.DispensationKeeper
+// 	distributionName := "123"
+// 	runner := ""
+// 	_, err := keeper.DistributeDrops(ctx, 1, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING)
+// 	assert.NoError(t, err)
+// 	pendingRecords := keeper.GetLimitedRecordsForRunner(ctx, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
+// 	for _, record := range pendingRecords.DistributionRecords {
+// 		recipientAddress, err := sdk.AccAddressFromBech32(record.RecipientAddress)
+// 		t.Log(record.RecipientAddress)
+// 		t.Log(recipientAddress)
+// 		t.Log(err)
+// 	}
+
+// }
 
 func TestKeeper_CreateAndDistributeDrops(t *testing.T) {
 	app, ctx := test.CreateTestApp(false)
@@ -152,3 +157,4 @@ func TestKeeper_VerifyDistribution_unable(t *testing.T) {
 	assert.Error(t, err)
 
 }
+
