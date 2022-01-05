@@ -168,16 +168,16 @@ func TestNewUserClaim(t *testing.T) {
 
 }
 
-func TestNewUserClaim_Error(t *testing.T) {
-	UserAddress := types.AttributeKeyDistributionRecordAddress
-	userClaimType := types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED
-	tm := time.Time{}
-	UserClaim, Error := types.NewUserClaim(UserAddress, userClaimType, tm)
-	tProto, err := gogotypes.TimestampProto(tm)
-	// assert.Error(t,Error,)
-	t.Log(UserClaim, tProto, Error, err)
+// func TestNewUserClaim_Error(t *testing.T) {
+// 	UserAddress := ""
+// 	userClaimType := types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED
+// 	tm := time.Time{}
+// 	UserClaim, Error := types.NewUserClaim(UserAddress, userClaimType, tm.UTC())
 
-}
+// 	// assert.Error(t,Error,)
+// 	t.Log(UserClaim)
+// 	t.Log(Error)
+// }
 func TestNewUserClaim_ValidateFalse(t *testing.T) {
 	UserAddress := ""
 	userClaimType := types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING
