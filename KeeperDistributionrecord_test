@@ -23,12 +23,66 @@ func TestKeeper_SetDistributionRecord_unableToSetRecord(t *testing.T) {
 		DistributionStartHeight:     int64(0),
 		DistributionCompletedHeight: int64(0),
 		AuthorizedRunner:            types.AttributeKeyDistributionRunner,
+	}package keeper_test
+
+import (
+	"testing"
+
+	"github.com/Sifchain/sifnode/x/dispensation/test"
+	"github.com/Sifchain/sifnode/x/dispensation/types"
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/google/uuid"
+	"github.com/stretchr/testify/assert"
+)
+
+func TestKeeper_SetDistributionRecord_unableToSetRecord(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+
+	dr := types.DistributionRecord{
+		DistributionStatus:          types.DistributionStatus_DISTRIBUTION_STATUS_FAILED,
+		DistributionType:            types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED,
+		DistributionName:            "",
+		RecipientAddress:            "",
+		Coins:                       sdk.Coins{},
+		DistributionStartHeight:     int64(0),
+		DistributionCompletedHeight: int64(0),
+		AuthorizedRunner:            types.AttributeKeyDistributionRunner,
 	}
 	bool := dr.Validate()
 	assert.False(t, bool)
 	err := keeper.SetDistributionRecord(ctx, dr)
 	assert.Error(t, err)
 
+}
+
+func TestKeeper_GetDistributionRecord(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	key := types.GetDistributionRecordKey(types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, uuid.New().String(), sdk.AccAddress("addr1_______________").String(), types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED)
+	res := keeper.Exists(ctx, key)
+	assert.False(t, res)
+	_, err := keeper.GetDistributionRecord(ctx, uuid.New().String(), sdk.AccAddress("addr1_______________").String(), types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED)
+	assert.Error(t, err)
+}
+
+func TestKeeper_GetDistributionRecordsIterator_Default(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	status := types.DistributionStatus_DISTRIBUTION_STATUS_UNSPECIFIED
+	res := keeper.GetDistributionRecordsIterator(ctx, status)
+	assert.Nil(t, res)
+
+}
+
+func TestKeeper_DeleteDistributionRecord_recordNotExist(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	key := types.GetDistributionRecordKey(types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, uuid.New().String(), sdk.AccAddress("addr1_______________").String(), types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED)
+	res := keeper.Exists(ctx, key)
+	assert.False(t, res)
+	err := keeper.DeleteDistributionRecord(ctx, uuid.New().String(), sdk.AccAddress("addr1_______________").String(), types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED)
+	assert.Error(t, err)
 }
 
 func TestKeeper_GetRecordsForNamePrefixed(t *testing.T) {
@@ -168,3 +222,4 @@ func TestKeeper_GetRecords_fromName(t *testing.T) {
 	list := keeper.GetRecordsForName(ctx, name)
 	assert.Len(t, list.DistributionRecords, 3)
 }
+
