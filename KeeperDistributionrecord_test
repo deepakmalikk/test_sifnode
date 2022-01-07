@@ -23,31 +23,6 @@ func TestKeeper_SetDistributionRecord_unableToSetRecord(t *testing.T) {
 		DistributionStartHeight:     int64(0),
 		DistributionCompletedHeight: int64(0),
 		AuthorizedRunner:            types.AttributeKeyDistributionRunner,
-	}package keeper_test
-
-import (
-	"testing"
-
-	"github.com/Sifchain/sifnode/x/dispensation/test"
-	"github.com/Sifchain/sifnode/x/dispensation/types"
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/google/uuid"
-	"github.com/stretchr/testify/assert"
-)
-
-func TestKeeper_SetDistributionRecord_unableToSetRecord(t *testing.T) {
-	app, ctx := test.CreateTestApp(false)
-	keeper := app.DispensationKeeper
-
-	dr := types.DistributionRecord{
-		DistributionStatus:          types.DistributionStatus_DISTRIBUTION_STATUS_FAILED,
-		DistributionType:            types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED,
-		DistributionName:            "",
-		RecipientAddress:            "",
-		Coins:                       sdk.Coins{},
-		DistributionStartHeight:     int64(0),
-		DistributionCompletedHeight: int64(0),
-		AuthorizedRunner:            types.AttributeKeyDistributionRunner,
 	}
 	bool := dr.Validate()
 	assert.False(t, bool)
