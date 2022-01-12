@@ -9,6 +9,7 @@ import (
 	"github.com/cosmos/cosmos-sdk/codec"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	paramtypes "github.com/cosmos/cosmos-sdk/x/params/types"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestKeeper_Logger(t *testing.T) {
@@ -20,9 +21,8 @@ func TestKeeper_Logger(t *testing.T) {
 	bankkeeper := types.BankKeeper(app.BankKeeper)
 	ps := paramtypes.Subspace{}
 	result := keeper.NewKeeper(cdc, key, bankkeeper, accountKeeper, ps)
-
 	res := result.Logger(ctx)
-	t.Log(res)
+	assert.Equal(t, res, result.Logger(ctx))
 
 }
 
@@ -37,7 +37,7 @@ func TestKeeper_codec(t *testing.T) {
 	result := keeper.NewKeeper(cdc, key, bankkeeper, accountKeeper, ps)
 
 	res := result.Codec()
-	t.Log(res)
+	assert.Equal(t, res, result.Codec())
 }
 
 func TestKeeper_getAccountKeeper(t *testing.T) {
@@ -55,17 +55,3 @@ func TestKeeper_getAccountKeeper(t *testing.T) {
 
 }
 
-func TestKeeper_hasCoins(t *testing.T) {
-	app, ctx := test.CreateTestApp(false)
-
-	key := sdk.NewKVStoreKey("rowan")
-	cdc := codec.BinaryCodec(app.AppCodec())
-	accountKeeper := types.AccountKeeper(app.AccountKeeper)
-	bankkeeper := types.BankKeeper(app.BankKeeper)
-	ps := paramtypes.Subspace{}
-	result := keeper.NewKeeper(cdc, key, bankkeeper, accountKeeper, ps)
-	user := sdk.AccAddress("xyz")
-	coins := sdk.Coins{}
-	res := result.HasCoins(ctx, user, coins)
-	t.Log(res)
-}
