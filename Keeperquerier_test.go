@@ -12,6 +12,7 @@ import (
 	"github.com/tendermint/tendermint/crypto"
 
 	"github.com/Sifchain/sifnode/app"
+
 	dispensationkeeper "github.com/Sifchain/sifnode/x/dispensation/keeper"
 	"github.com/Sifchain/sifnode/x/dispensation/test"
 	"github.com/Sifchain/sifnode/x/dispensation/types"
@@ -57,6 +58,14 @@ func GenerateQueryData(app *app.SifchainApp, ctx sdk.Context, name string, outLi
 		_ = keeper.SetDistributionRecord(ctx, record)
 	}
 
+}
+
+func TestQueryClaimsByType(t *testing.T) {
+
+	// req := abci.RequestQuery{}
+	// var params types.QueryClaimsByTypeRequest
+	// err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
+	// t.log
 }
 
 func TestQueryRecordsName(t *testing.T) {
@@ -133,6 +142,30 @@ func TestQueryAllDistributions(t *testing.T) {
 	assert.Len(t, dr.Distributions, 10)
 }
 
+func TestQueryAllDistributions_fail(t *testing.T) {
+	testApp, ctx := test.CreateTestApp(false)
+	keeper1 := testApp.DispensationKeeper
+	name := uuid.New().String()
+	outList := test.CreatOutputList(3, "1000000000")
+	GenerateQueryData(testApp, ctx, name, outList)
+
+	querier := dispensationkeeper.NewLegacyQuerier(keeper1)
+	query := abci.RequestQuery{
+		Path: "",
+		Data: []byte{},
+	}
+	query.Path = ""
+	query.Data = nil
+	res, err := querier(ctx, []string{types.QueryAllDistributions}, query)
+	t.Log(err, res)
+	r := dispensationkeeper.Querier{}
+	t.Log(r)
+	res1, err1 := r.AllDistributions(sdk.WrapSDKContext(ctx), &types.QueryAllDistributionsRequest{})
+	t.Log("helooo")
+	t.Log(res1)
+	t.Log(err1)
+
+}
 func TestQueryClaims(t *testing.T) {
 	testApp, ctx := test.CreateTestApp(false)
 	keeper := testApp.DispensationKeeper
