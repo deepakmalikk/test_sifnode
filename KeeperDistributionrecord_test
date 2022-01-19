@@ -165,6 +165,40 @@ func TestKeeper_GetRecordsForRecipient(t *testing.T) {
 	assert.Len(t, list.DistributionRecords, 1)
 }
 
+func TestKeeper_GetRecordsForRecipient_StatusCompleted(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outList := test.CreatOutputList(3, "1000000000")
+	name := uuid.New().String()
+	for _, rec := range outList {
+		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+		err := keeper.SetDistributionRecord(ctx, record)
+		assert.NoError(t, err)
+		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED, record.DistributionType)
+		assert.NoError(t, err)
+	}
+	list := keeper.GetRecordsForRecipient(ctx, outList[0].Address)
+	assert.Len(t, list.DistributionRecords, 1)
+
+}
+
+func TestKeeper_GetRecordsForRecipient_StatusFailed(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outList := test.CreatOutputList(3, "1000000000")
+	name := uuid.New().String()
+	for _, rec := range outList {
+		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+		err := keeper.SetDistributionRecord(ctx, record)
+		assert.NoError(t, err)
+		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, record.DistributionType)
+		assert.NoError(t, err)
+	}
+	list := keeper.GetRecordsForRecipient(ctx, outList[0].Address)
+	assert.Len(t, list.DistributionRecords, 1)
+
+}
+
 func TestKeeper_GetRecords(t *testing.T) {
 	app, ctx := test.CreateTestApp(false)
 	keeper := app.DispensationKeeper
@@ -182,6 +216,70 @@ func TestKeeper_GetRecords(t *testing.T) {
 
 }
 
+// func TestKeeper_GetRecords_Error(t *testing.T) {
+// 	app, ctx := test.CreateTestApp(false)
+// 	keeper := app.DispensationKeeper
+// 	outList := test.CreatOutputList(3, "1000000000")
+// 	name := uuid.New().String()
+// 	for _, rec := range outList {
+// 		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+// 		err := keeper.SetDistributionRecord(ctx, record)
+// 		assert.NoError(t, err)
+// 		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, record.DistributionType)
+// 		assert.NoError(t, err)
+// 	}
+// 	list := keeper.GetRecords(ctx)
+// 	assert.Len(t, list.DistributionRecords, 3)
+// 	iterator := keeper.GetDistributionRecordsIterator(ctx, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
+// 	bytesValue := iterator.Value()
+// 	dr := types.DistributionRecord{
+// 		DistributionStatus:          types.DistributionStatus_DISTRIBUTION_STATUS_FAILED,
+// 		DistributionType:            types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED,
+// 		DistributionName:            "",
+// 		RecipientAddress:            "",
+// 		Coins:                       sdk.Coins{},
+// 		DistributionStartHeight:     int64(0),
+// 		DistributionCompletedHeight: int64(0),
+// 		AuthorizedRunner:            types.AttributeKeyDistributionRunner,
+// 	}
+// 	// err := keeper.cdc.Unmarshal(bytesValue, &dr)
+// 	cdc := codec.BinaryCodec(app.AppCodec())
+// 	res := cdc.Unmarshal(bytesValue, &dr)
+// 	t.Log(res)
+// }
+func TestKeeper_GetRecords_StatusCompleted(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outList := test.CreatOutputList(3, "1000000000")
+	name := uuid.New().String()
+	for _, rec := range outList {
+		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+		err := keeper.SetDistributionRecord(ctx, record)
+		assert.NoError(t, err)
+		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED, record.DistributionType)
+		assert.NoError(t, err)
+	}
+	list := keeper.GetRecords(ctx)
+	assert.Len(t, list.DistributionRecords, 3)
+
+}
+
+func TestKeeper_GetRecords_StatusFailed(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outList := test.CreatOutputList(3, "1000000000")
+	name := uuid.New().String()
+	for _, rec := range outList {
+		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+		err := keeper.SetDistributionRecord(ctx, record)
+		assert.NoError(t, err)
+		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, record.DistributionType)
+		assert.NoError(t, err)
+	}
+	list := keeper.GetRecords(ctx)
+	assert.Len(t, list.DistributionRecords, 3)
+
+}
 func TestKeeper_GetRecords_fromName(t *testing.T) {
 	app, ctx := test.CreateTestApp(false)
 	keeper := app.DispensationKeeper
@@ -198,3 +296,76 @@ func TestKeeper_GetRecords_fromName(t *testing.T) {
 	assert.Len(t, list.DistributionRecords, 3)
 }
 
+func TestKeeper_GetRecords_fromName_StatusCompleted(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outList := test.CreatOutputList(3, "1000000000")
+	name := uuid.New().String()
+	for _, rec := range outList {
+		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+		err := keeper.SetDistributionRecord(ctx, record)
+		assert.NoError(t, err)
+		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED, record.DistributionType)
+		assert.NoError(t, err)
+	}
+	list := keeper.GetRecordsForName(ctx, name)
+	assert.Len(t, list.DistributionRecords, 3)
+}
+
+func TestKeeper_GetRecords_fromName_StatusFailed(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outList := test.CreatOutputList(3, "1000000000")
+	name := uuid.New().String()
+	for _, rec := range outList {
+		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+		err := keeper.SetDistributionRecord(ctx, record)
+		assert.NoError(t, err)
+		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, record.DistributionType)
+		assert.NoError(t, err)
+	}
+	list := keeper.GetRecordsForName(ctx, name)
+	assert.Len(t, list.DistributionRecords, 3)
+}
+
+func TestKeeper_ChangeRecordStatus_ErrorInSettingRecord(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	dr := types.DistributionRecord{
+		DistributionStatus:          types.DistributionStatus_DISTRIBUTION_STATUS_FAILED,
+		DistributionType:            types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED,
+		DistributionName:            "",
+		RecipientAddress:            "",
+		Coins:                       sdk.Coins{},
+		DistributionStartHeight:     int64(0),
+		DistributionCompletedHeight: int64(0),
+		AuthorizedRunner:            types.AttributeKeyDistributionRunner,
+	}
+	height := int64(1)
+	newstatus := types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED
+
+	err := keeper.ChangeRecordStatus(ctx, dr, height, newstatus)
+	assert.Error(t, err)
+}
+
+// func TestKeeper_ChangeRecordStatus_ErrorInDeletingRecord(t *testing.T) {
+// 	app, ctx := test.CreateTestApp(false)
+// 	keeper := app.DispensationKeeper
+// 	outList := test.CreatOutputList(3, "1000000000")
+// 	name := uuid.New().String()
+// 	for _, rec := range outList {
+// 		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+
+// 		err := keeper.SetDistributionRecord(ctx, record)
+// 		assert.NoError(t, err)
+// 		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, record.DistributionType)
+// 		assert.NoError(t, err)
+// 		err1 := keeper.ChangeRecordStatus(ctx, record, ctx.BlockHeight(), types.DistributionStatus_DISTRIBUTION_STATUS_UNSPECIFIED)
+// 		assert.NoError(t, err1)
+
+// 	}
+// 	key := types.GetDistributionRecordKey(types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, name, sdk.AccAddress("addr1_______________").String(), types.DistributionType_DISTRIBUTION_TYPE_AIRDROP)
+// 	t.Log(key)
+// 	err := keeper.DeleteDistributionRecord(ctx, name, sdk.AccAddress("addr1_______________").String(), types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP)
+// 	t.Log(err)
+// }
