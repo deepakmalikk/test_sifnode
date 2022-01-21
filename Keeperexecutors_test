@@ -51,45 +51,45 @@ func TestKeeper_AccumulateDrops(t *testing.T) {
 	}
 }
 
+
 func TestKeeper_CreateDrops(t *testing.T) {
+    app, ctx := test.CreateTestApp(false)
+    keeper := app.DispensationKeeper
+    outputAmount := "10000000000000000000"
+
+    outputList := test.CreatOutputList(3, outputAmount)
+    distributionName := uuid.New().String()
+    runner := sdk.AccAddress("addr1_______________").String()
+    err1 := keeper.CreateDrops(ctx, outputList, distributionName, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED, runner)
+    assert.NoError(t, err1)
+    for _, receiver := range outputList {
+        t.Log(receiver)
+        distributionRecord := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED, distributionName, receiver.Address, receiver.Coins, ctx.BlockHeight(), -1, runner)
+        t.Log(distributionRecord)
+        if keeper.ExistsDistributionRecord(ctx, distributionName, receiver.Address, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, distributionRecord.DistributionType) {
+            oldRecord, err := keeper.GetDistributionRecord(ctx, distributionName, receiver.Address, types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, distributionRecord.DistributionType)
+
+            t.Log(oldRecord)
+            t.Log(err)
+
+        }
+
+    }
+}
+func TestKeeper_DistributeDrops_Fail(t *testing.T) {
 	app, ctx := test.CreateTestApp(false)
 	keeper := app.DispensationKeeper
-	outputAmount := "10000000000000000000"
-
-	outputList := test.CreatOutputList(3, outputAmount)
-	distributionName := uuid.New().String()
+	distributionName := sdk.AccAddress("addr1_______________").String()
 	runner := sdk.AccAddress("addr1_______________").String()
-	err1 := keeper.CreateDrops(ctx, outputList, distributionName, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED, runner)
-	assert.NoError(t, err1)
-	for _, receiver := range outputList {
-		t.Log(receiver)
-		distributionRecord := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED, distributionName, receiver.Address, receiver.Coins, ctx.BlockHeight(), -1, runner)
-		t.Log(distributionRecord)
-		if keeper.ExistsDistributionRecord(ctx, distributionName, receiver.Address, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING, distributionRecord.DistributionType) {
-			oldRecord, err := keeper.GetDistributionRecord(ctx, distributionName, receiver.Address, types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, distributionRecord.DistributionType)
+	_, err := keeper.DistributeDrops(ctx, 3, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP)
+	t.Log(err)
+	pendingRecords := keeper.GetLimitedRecordsForRunner(ctx, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
+	t.Log(pendingRecords.DistributionRecords)
 
-			t.Log(oldRecord)
-			t.Log(err)
+	recipientAddress, err := sdk.AccAddressFromBech32("")
+	t.Log(recipientAddress, err)
 
-		}
-
-	}
 }
-
-// func TestKeeper_DistributeDrops_Fail(t *testing.T) {
-// 	app, ctx := test.CreateTestApp(false)
-// 	keeper := app.DispensationKeeper
-// 	distributionName := "123"
-// 	runner := sdk.AccAddress("addr1_______________").String()
-// 	_, err := keeper.DistributeDrops(ctx, 1, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING)
-// 	assert.NoError(t, err)
-// 	pendingRecords := keeper.GetLimitedRecordsForRunner(ctx, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_LIQUIDITY_MINING, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
-// 	for _, record := range pendingRecords.DistributionRecords {
-// 		recipientAddress, err := sdk.AccAddressFromBech32(record.RecipientAddress)
-// 		t.Log(recipientAddress, err)
-// 	}
-
-// }
 
 func TestKeeper_CreateAndDistributeDrops(t *testing.T) {
 	app, ctx := test.CreateTestApp(false)
@@ -181,5 +181,3 @@ func TestKeeper_VerifyDistribution_unable(t *testing.T) {
 	assert.Error(t, err)
 
 }
-
-
