@@ -301,6 +301,41 @@ func TestKeeper_GetRecords_fromName_StatusCompleted(t *testing.T) {
 	list := keeper.GetRecordsForName(ctx, name)
 	assert.Len(t, list.DistributionRecords, 3)
 }
+func TestKeeper_GetRecords_fromName_StatusFailed(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outList := test.CreatOutputList(3, "1000000000")
+	name := uuid.New().String()
+	for _, rec := range outList {
+		record := types.NewDistributionRecord(types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, name, rec.Address, rec.Coins, ctx.BlockHeight(), -1, "")
+		err := keeper.SetDistributionRecord(ctx, record)
+		assert.NoError(t, err)
+		_, err = keeper.GetDistributionRecord(ctx, name, rec.Address, types.DistributionStatus_DISTRIBUTION_STATUS_FAILED, record.DistributionType)
+		assert.NoError(t, err)
+	}
+	list := keeper.GetRecordsForName(ctx, name)
+	assert.Len(t, list.DistributionRecords, 3)
+}
+
+func TestKeeper_ChangeRecordStatus_ErrorInSettingRecord(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	dr := types.DistributionRecord{
+		DistributionStatus:          types.DistributionStatus_DISTRIBUTION_STATUS_FAILED,
+		DistributionType:            types.DistributionType_DISTRIBUTION_TYPE_UNSPECIFIED,
+		DistributionName:            "",
+		RecipientAddress:            "",
+		Coins:                       sdk.Coins{},
+		DistributionStartHeight:     int64(0),
+		DistributionCompletedHeight: int64(0),
+		AuthorizedRunner:            types.AttributeKeyDistributionRunner,
+	}
+	height := int64(1)
+	newstatus := types.DistributionStatus_DISTRIBUTION_STATUS_COMPLETED
+
+	err := keeper.ChangeRecordStatus(ctx, dr, height, newstatus)
+	assert.Error(t, err)
+}
 
 // func TestKeeper_ChangeRecordStatus_ErrorInDeletingRecord(t *testing.T) {
 // 	app, ctx := test.CreateTestApp(false)
