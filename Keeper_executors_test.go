@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	sifapp "github.com/Sifchain/sifnode/app"
+	"github.com/google/uuid"
 
 	"github.com/Sifchain/sifnode/x/dispensation/test"
 	"github.com/Sifchain/sifnode/x/dispensation/types"
@@ -94,34 +95,30 @@ func TestKeeper_DistributeDrops_For_address_fail(t *testing.T) {
 
 }
 
-// func TestKeeper_DistributeDrops_fail(t *testing.T) {
-// 	app, ctx := test.CreateTestApp(false)
-// 	keeper := app.DispensationKeeper
-// 	outputAmount := "10000000000000000000"
-// 	dispensationCreator := sdk.AccAddress(crypto.AddressHash([]byte("Creator")))
-// 	outputList := test.CreatOutputList(3, outputAmount)
-// 	totalCoins, err := utils.TotalOutput(outputList)
-// 	assert.NoError(t, err)
-// 	totalCoins = totalCoins.Add(totalCoins...).Add(totalCoins...)
-// 	err = sifapp.AddCoinsToAccount(types.ModuleName, app.BankKeeper, ctx, dispensationCreator, totalCoins)
-// 	assert.NoError(t, err)
-// 	err = keeper.AccumulateDrops(ctx, dispensationCreator.String(), totalCoins)
-// 	assert.NoError(t, err)
-// 	assert.True(t, keeper.HasCoins(ctx, types.GetDistributionModuleAddress(), totalCoins))
-// 	distributionName := "ar1"
-// 	runner := "dd"
-// 	err = keeper.CreateDrops(ctx, outputList, distributionName, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, runner)
-// 	assert.NoError(t, err)
-// 	_, err1 := keeper.DistributeDrops(ctx, 1, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP)
-// 	t.Log(err1)
-// 	pendingRecords := keeper.GetLimitedRecordsForRunner(ctx, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, types.DistributionStatus_DISTRIBUTION_STATUS_FAILED)
-// 	t.Log(pendingRecords)
-// 	// for _, record := range pendingRecords.DistributionRecords {
-// 	// 	recipientAddress, err := sdk.AccAddressFromBech32(record.RecipientAddress)
-// 	// 	t.Log(recipientAddress, err)
-// 	// }
-// }
-
+func TestKeeper_DistributeDrops_fail(t *testing.T) {
+	app, ctx := test.CreateTestApp(false)
+	keeper := app.DispensationKeeper
+	outputAmount := "10000000000000000000"
+	dispensationCreator := sdk.AccAddress(crypto.AddressHash([]byte("Creator")))
+	outputList := test.CreatOutputList(3, outputAmount)
+	totalCoins, err := utils.TotalOutput(outputList)
+	assert.NoError(t, err)
+	totalCoins = totalCoins.Add(totalCoins...).Add(totalCoins...)
+	err = sifapp.AddCoinsToAccount(types.ModuleName, app.BankKeeper, ctx, dispensationCreator, totalCoins)
+	assert.NoError(t, err)
+	err = keeper.AccumulateDrops(ctx, dispensationCreator.String(), totalCoins)
+	assert.NoError(t, err)
+	assert.True(t, keeper.HasCoins(ctx, types.GetDistributionModuleAddress(), totalCoins))
+	distributionName := uuid.New().String()
+	runner := sdk.AccAddress("addr1_______________").String()
+	err = keeper.CreateDrops(ctx, outputList, distributionName, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, runner)
+	assert.NoError(t, err)
+	pendingRecords := keeper.GetLimitedRecordsForRunner(ctx, distributionName, runner, types.DistributionType_DISTRIBUTION_TYPE_AIRDROP, types.DistributionStatus_DISTRIBUTION_STATUS_PENDING)
+	for _, record := range pendingRecords.DistributionRecords {
+		recipientAddress, err := sdk.AccAddressFromBech32(record.RecipientAddress)
+		t.Log(recipientAddress, err)
+	}
+}
 func TestKeeper_CreateAndDistributeDrops(t *testing.T) {
 	app, ctx := test.CreateTestApp(false)
 	keeper := app.DispensationKeeper
