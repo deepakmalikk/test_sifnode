@@ -105,8 +105,11 @@ func TestKeeper_GetClaim(t *testing.T) {
 // func TestKeeper_GetClaims_Fail(t *testing.T) {
 // 	app, ctx := test.CreateTestApp(false)
 // 	keeper := app.DispensationKeeper
-// 	result := keeper.GetClaims(ctx)
-// 	t.Log(result)
+// 	claimList := keeper.GetClaims(ctx)
+// 	assert.Len(t, claimList.UserClaims, 0)
+// 	iterator := keeper.GetUserClaimsIterator(ctx)
+// 	for ; iterator.Valid(); iterator.Next() {
 
-	
+// 		t.Log(iterator.Value())
+// 	}
 // }
