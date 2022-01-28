@@ -60,13 +60,31 @@ func GenerateQueryData(app *app.SifchainApp, ctx sdk.Context, name string, outLi
 
 }
 
-func TestQueryClaimsByType(t *testing.T) {
+// func TestQueryClaimsByType(t *testing.T) {
 
-	// req := abci.RequestQuery{}
-	// var params types.QueryClaimsByTypeRequest
-	// err := types.ModuleCdc.UnmarshalJSON(req.Data, &params)
-	// t.log
-}
+// 	sifapp, ctx := test.CreateTestApp(false)
+// 	// name := uuid.New().String()
+// 	// outList := test.CreatOutputList(3, "1000000000")
+// 	// GenerateQueryData(sifapp, ctx, name, outList)
+// 	keeper := sifapp.DispensationKeeper
+// 	querier := dispensationkeeper.NewLegacyQuerier(keeper)
+// 	quereyRecName := types.QueryRecordsByRecipientAddrRequest{
+// 		// Address: outList[0].Address,
+// 	}
+// 	query := abci.RequestQuery{
+
+// 	}
+// 	qp, errRes := sifapp.LegacyAmino().MarshalJSON(&quereyRecName)
+// 	require.NoError(t, errRes)
+// 	query.Path = ""
+// 	query.Data = qp
+// 	res, err := querier(ctx, []string{types.QueryRecordsByRecipient}, query)
+// 	t.Log(res)
+// 	t.Log(err)
+// 	var params types.DistributionRecord
+// 	err1 := types.ModuleCdc.UnmarshalJSON(query.Data, &params)
+// 	t.Log(err1)
+// }
 
 func TestQueryRecordsName(t *testing.T) {
 	sifapp, ctx := test.CreateTestApp(false)
@@ -142,30 +160,23 @@ func TestQueryAllDistributions(t *testing.T) {
 	assert.Len(t, dr.Distributions, 10)
 }
 
-func TestQueryAllDistributions_fail(t *testing.T) {
-	testApp, ctx := test.CreateTestApp(false)
-	keeper1 := testApp.DispensationKeeper
-	name := uuid.New().String()
-	outList := test.CreatOutputList(3, "1000000000")
-	GenerateQueryData(testApp, ctx, name, outList)
+// func TestQueryAllDistributions_fail(t *testing.T) {
+// 	testApp, ctx := test.CreateTestApp(false)
+// 	keeper1 := testApp.DispensationKeeper
 
-	querier := dispensationkeeper.NewLegacyQuerier(keeper1)
-	query := abci.RequestQuery{
-		Path: "",
-		Data: []byte{},
-	}
-	query.Path = ""
-	query.Data = nil
-	res, err := querier(ctx, []string{types.QueryAllDistributions}, query)
-	t.Log(err, res)
-	r := dispensationkeeper.Querier{}
-	t.Log(r)
-	res1, err1 := r.AllDistributions(sdk.WrapSDKContext(ctx), &types.QueryAllDistributionsRequest{})
-	t.Log("helooo")
-	t.Log(res1)
-	t.Log(err1)
+// 	querier := dispensationkeeper.NewLegacyQuerier(keeper1)
+// 	query := abci.RequestQuery{
+// 		Path: "",
+// 		Data: []byte{0},
+// 	}
 
-}
+// 	res, err := querier(ctx, []string{types.QueryAllDistributions}, query)
+// 	assert.Len(t, res, 2)
+// 	assert.NoError(t, err)
+// 	querier1 := dispensationkeeper.NewQuerier(keeper1)
+// 	res1, err1 := querier1.AllDistributions(sdk.WrapSDKContext(ctx), &types.QueryAllDistributionsRequest{})
+// 	t.Log(res1, err1)
+// }
 func TestQueryClaims(t *testing.T) {
 	testApp, ctx := test.CreateTestApp(false)
 	keeper := testApp.DispensationKeeper
